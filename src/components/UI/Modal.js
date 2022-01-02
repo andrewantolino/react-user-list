@@ -1,3 +1,4 @@
+import ReactDOM from 'react-dom';
 import styled from 'styled-components';
 
 import Card from './Card';
@@ -15,12 +16,13 @@ const StyledBackground = styled.div`
   position: fixed;
   top: 0;
   left: 0;
+  z-index: 10;
 `;
 
 const StyledPopUp = styled.div`
   width: 50%;
   margin: 0 auto;
-  z-index: 10;
+  z-index: 100;
 `;
 
 const StyledCard = styled(Card)`
@@ -38,14 +40,9 @@ const StyledButtonContainer = styled.div`
   padding: 1.5rem;
 `;
 
-const Modal = ({ title, message, onClickAccept }) => {
-  const handleClick = () => {
-    onClickAccept();
-  };
-
+const Backdrop = ({ title, message, handleClick }) => {
   return (
-    <>
-      <StyledBackground onClick={onClickAccept} />
+    <StyledBackground onClick={handleClick}>
       <StyledPopUp>
         <StyledCard>
           <CardHeading>
@@ -59,6 +56,21 @@ const Modal = ({ title, message, onClickAccept }) => {
           </StyledButtonContainer>
         </StyledCard>
       </StyledPopUp>
+    </StyledBackground>
+  );
+};
+
+const Modal = ({ title, message, onClickAccept }) => {
+  const handleClick = () => {
+    onClickAccept();
+  };
+
+  return (
+    <>
+      {ReactDOM.createPortal(
+        <Backdrop title={title} message={message} handleClick={handleClick} />,
+        document.getElementById('modal-root')
+      )}
     </>
   );
 };
